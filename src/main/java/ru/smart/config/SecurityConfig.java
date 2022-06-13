@@ -51,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .exceptionHandling()
                 .authenticationEntryPoint(((request, response, e) -> resolver.resolveException(request, response, null, e)))
                 .and()
-            .authorizeRequests()   //Это строкой мы говорим предоставить разрешения для следующих url
+            .authorizeRequests()
                 .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
                 .anyRequest().authenticated()
                 .and()

@@ -31,5 +31,9 @@ public class Subject {
     @Column(name = "provided_count")
     private int providedCount;
 
+    public void incProvidedCount() {
+        providedCount++;
+    }
+
     //TODO разобраться с названиями
 }

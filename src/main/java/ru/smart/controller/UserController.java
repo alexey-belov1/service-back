@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.smart.service.UserService;
 import ru.smart.service.dto.UserDTO;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,7 +45,7 @@ public class UserController {
     }
 
     @PostMapping("/user/sign-up")
-    public ResponseEntity<UserDTO> create(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserDTO> create(@Valid @RequestBody UserDTO userDTO) {
         return new ResponseEntity<>(
                 this.userService.save(userDTO),
                 HttpStatus.CREATED
@@ -52,7 +53,7 @@ public class UserController {
     }
 
     @PutMapping("/user")
-    public ResponseEntity<Void> update(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<Void> update(@Valid @RequestBody UserDTO userDTO) {
         this.userService.update(userDTO);
         return ResponseEntity.ok().build();
     }

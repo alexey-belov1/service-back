@@ -14,6 +14,7 @@ import ru.smart.controller.util.HeaderUtil;
 import ru.smart.service.DealService;
 import ru.smart.service.dto.DealDTO;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,17 +46,19 @@ public class DealController {
     }
 
     @PostMapping("/deal")
-    public ResponseEntity<DealDTO> create(@RequestBody DealDTO dealDTO) {
+    public ResponseEntity<DealDTO> create(@Valid @RequestBody DealDTO dealDTO) {
         DealDTO result = dealService.save(dealDTO);
         return new ResponseEntity<>(
                 result,
-                HeaderUtil.createSuccessAlert("dealCreated", String.valueOf(result.getId())),
+                result.getId() != 0
+                        ? HeaderUtil.createSuccessAlert("dealCreated", String.valueOf(result.getId()))
+                        : HeaderUtil.createWarningAlert("dealRejected", ""),
                 HttpStatus.CREATED
         );
     }
 
     @PutMapping("/deal")
-    public ResponseEntity<Void> update(@RequestBody DealDTO dealDTO) {
+    public ResponseEntity<Void> update(@Valid @RequestBody DealDTO dealDTO) {
         this.dealService.update(dealDTO);
         return ResponseEntity.ok().build();
     }

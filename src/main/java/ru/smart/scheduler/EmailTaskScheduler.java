@@ -21,9 +21,9 @@ public class EmailTaskScheduler {
         this.emailTaskService = emailTaskService;
     }
 
-    @Scheduled(fixedDelay = 10000)
+/*    @Scheduled(fixedDelay = 10000)
     public void scheduleFixedDelaySendEmail() {
         List<EmailTask> list = this.emailTaskService.findAllWithLimit(10);
         list.forEach(emailService::send);
-    }
+    }*/
 }

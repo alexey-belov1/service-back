@@ -11,6 +11,13 @@ public final class HeaderUtil {
         return headers;
     }
 
+    public static HttpHeaders createWarningAlert(String entity, String param) {
+        HttpHeaders headers = createAlert("warning");
+        headers.set("x-app-entity", entity);
+        headers.set("X-app-param", param);
+        return headers;
+    }
+
     private static HttpHeaders createAlert(String status) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("x-app-alert", status);

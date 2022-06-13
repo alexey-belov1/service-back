@@ -1,11 +1,14 @@
 package ru.smart.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.smart.dao.DealDAO;
 import ru.smart.dao.EmailTaskDAO;
+import ru.smart.dao.SubjectDAO;
 import ru.smart.domain.Deal;
 import ru.smart.domain.EmailTask;
+import ru.smart.domain.Subject;
 import ru.smart.domain.User;
 import ru.smart.service.dto.DealDTO;
 import ru.smart.service.filter.FilterDB;
@@ -25,13 +28,21 @@ public class DealService {
     private final UserService userService;
     private final EmailService emailService;
     private final EmailTaskDAO emailTaskDAO;
+    private final SubjectDAO subjectDAO;
 
-    public DealService(final DealDAO dealDAO, DealMapper dealMapper, UserService userService, EmailService emailService, EmailTaskDAO emailTaskDAO) {
+    public DealService(
+            DealDAO dealDAO,
+            DealMapper dealMapper,
+            UserService userService,
+            EmailService emailService,
+            EmailTaskDAO emailTaskDAO,
+            SubjectDAO subjectDAO) {
         this.dealDAO = dealDAO;
         this.dealMapper = dealMapper;
         this.userService = userService;
         this.emailService = emailService;
         this.emailTaskDAO = emailTaskDAO;
+        this.subjectDAO = subjectDAO;
     }
 
     @Transactional(readOnly = true)
@@ -53,8 +64,18 @@ public class DealService {
             .map(this.dealMapper::toDto);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public DealDTO save(DealDTO dealDTO) {
+
+        Subject subject = this.subjectDAO.findOne(dealDTO.getSubject().getId()).orElseThrow(
+                () -> new RuntimeException("Subject not found")
+        );
+        if(subject.getReservedCount() <= subject.getProvidedCount()) {
+            return new DealDTO();
+        }
+        subject.incProvidedCount();
+        this.subjectDAO.update(subject);
+
         Deal deal = this.dealMapper.toEntity(dealDTO);
         deal.setCreated(GregorianCalendar.getInstance());
         deal.setProvided(GregorianCalendar.getInstance());
@@ -69,7 +90,7 @@ public class DealService {
                 .text("Услуга зарегистрирована под номером " + deal.getId())
                 .build();
         this.emailTaskDAO.create(emailTask);
-        //this.emailService.send(emailTask);
+        this.emailService.send(emailTask);
         return this.dealMapper.toDto(deal);
     }
 
@@ -82,5 +103,12 @@ public class DealService {
     @Transactional
     public void deleteById(int id) {
         this.dealDAO.deleteById(id);
+    }
+
+    private boolean checkSubjectLimit(DealDTO dealDTO) {
+        Subject subject = this.subjectDAO.findOne(dealDTO.getSubject().getId()).orElseThrow(
+                () -> new RuntimeException("Subject not found")
+        );
+        return subject.getReservedCount() > subject.getProvidedCount();
     }
 }

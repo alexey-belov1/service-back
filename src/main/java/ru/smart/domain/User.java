@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,9 +24,12 @@ public class User {
     @EqualsAndHashCode.Include
     private int id;
 
+    @Column(nullable = false)
     private String login;
 
+    @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
     private Calendar created;
 }
