@@ -28,9 +28,9 @@ public class DealController {
     }
 
     @GetMapping("/deal")
-    public ResponseEntity<List<DealDTO>> findAllWithSubject() {
+    public ResponseEntity<List<DealDTO>> findAllWithSubjectAndFiltersForCurrentUser() {
         return new ResponseEntity<>(
-            this.dealService.findAllWithSubject(),
+            this.dealService.findAllWithSubjectAndFiltersForCurrentUser(),
             HttpStatus.OK
         );
     }

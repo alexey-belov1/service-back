@@ -4,7 +4,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.smart.dao.DealDAO;
 import ru.smart.domain.Deal;
+import ru.smart.domain.User;
 import ru.smart.service.dto.DealDTO;
+import ru.smart.service.filter.FilterDB;
 import ru.smart.service.mapper.DealMapper;
 
 import java.util.GregorianCalendar;
@@ -29,8 +31,14 @@ public class DealService {
     }
 
     @Transactional(readOnly = true)
-    public List<DealDTO> findAllWithSubject() {
-        return dealDAO.findAllWithSubject().stream()
+    public List<DealDTO> findAllWithSubjectAndFiltersForCurrentUser() {
+        User user = userService.getCurrentUser().orElseThrow(
+                () -> new RuntimeException("User not found in context")
+        );
+        FilterDB filter = new FilterDB("userIdEquals");
+        filter.setParam("user_id", user.getId());
+        List<FilterDB> filters = List.of(filter);
+        return dealDAO.findAllWithSubjectAndFilters(filters).stream()
             .map(dealMapper::toDto)
             .collect(Collectors.toCollection(LinkedList::new));
     }

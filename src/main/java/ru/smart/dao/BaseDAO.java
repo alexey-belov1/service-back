@@ -3,6 +3,7 @@ package ru.smart.dao;
 import org.hibernate.*;
 import org.postgresql.shaded.com.ongres.scram.common.util.Preconditions;
 import org.springframework.beans.factory.annotation.Autowired;
+import ru.smart.service.filter.FilterDB;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,13 +19,24 @@ public abstract class BaseDAO<T> {
         this.clazz = Preconditions.checkNotNull(clazz, "clazz");
     }
 
-    public Optional<T> findOne(final long id) {
+    public Optional<T> findOne(final int id) {
         T entity = getCurrentSession().get(clazz, id);
         return Optional.ofNullable(entity);
     }
 
     public List<T> findAll() {
         return getCurrentSession().createQuery("from " + clazz.getName()).list();
+    }
+
+    public List<T> findWithFilter(List<FilterDB> filters) {
+        Session session = getCurrentSession();
+        for (FilterDB filter : filters) {
+            session.enableFilter(filter.getName());
+            if (filter.withParameter()) {
+                session.getEnabledFilter(filter.getName()).setParameter(filter.getParamName(), filter.getParamValue());
+            }
+        }
+        return session.createQuery("from " + clazz.getName()).list();
     }
 
     public T create(final T entity) {

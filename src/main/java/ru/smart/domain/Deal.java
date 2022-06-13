@@ -2,8 +2,11 @@ package ru.smart.domain;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.FilterDefs;
+import org.hibernate.annotations.Filters;
+import org.hibernate.annotations.ParamDef;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,6 +19,15 @@ import java.util.Calendar;
 
 @Entity
 @Table(name = "deal")
+@FilterDefs({
+        @FilterDef(
+                name = "userIdEquals",
+                parameters = @ParamDef(name = "user_id", type = "int")
+        )
+})
+@Filters({
+        @Filter(name="userIdEquals", condition = "user_id = :user_id")
+})
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Deal {
