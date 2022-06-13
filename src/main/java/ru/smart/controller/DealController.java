@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.smart.controller.util.HeaderUtil;
 import ru.smart.service.DealService;
 import ru.smart.service.dto.DealDTO;
 
@@ -45,8 +46,10 @@ public class DealController {
 
     @PostMapping("/deal")
     public ResponseEntity<DealDTO> create(@RequestBody DealDTO dealDTO) {
+        DealDTO result = dealService.save(dealDTO);
         return new ResponseEntity<>(
-                dealService.save(dealDTO),
+                result,
+                HeaderUtil.createSuccessAlert("dealCreated", String.valueOf(result.getId())),
                 HttpStatus.CREATED
         );
     }
