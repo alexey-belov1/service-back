@@ -34,3 +34,13 @@ create table deal
     constraint fk_task_subject_id foreign key (subject_id) references subject (id)
 );
 -- rollback drop table deal;
+
+-- changeset smart:create_table_email_task
+create table email_task
+(
+    id            serial primary key,
+    recipient     varchar(500) not null,
+    theme         varchar(500) not null,
+    text          varchar(500) not null
+);
+-- rollback drop table email_task;

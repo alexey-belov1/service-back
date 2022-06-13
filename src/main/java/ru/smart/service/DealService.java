@@ -3,7 +3,9 @@ package ru.smart.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.smart.dao.DealDAO;
+import ru.smart.dao.EmailTaskDAO;
 import ru.smart.domain.Deal;
+import ru.smart.domain.EmailTask;
 import ru.smart.domain.User;
 import ru.smart.service.dto.DealDTO;
 import ru.smart.service.filter.FilterDB;
@@ -19,15 +21,17 @@ import java.util.stream.Collectors;
 public class DealService {
 
     private final DealDAO dealDAO;
-
     private final DealMapper dealMapper;
-
     private final UserService userService;
+    private final EmailService emailService;
+    private final EmailTaskDAO emailTaskDAO;
 
-    public DealService(final DealDAO dealDAO, DealMapper dealMapper, UserService userService) {
+    public DealService(final DealDAO dealDAO, DealMapper dealMapper, UserService userService, EmailService emailService, EmailTaskDAO emailTaskDAO) {
         this.dealDAO = dealDAO;
         this.dealMapper = dealMapper;
         this.userService = userService;
+        this.emailService = emailService;
+        this.emailTaskDAO = emailTaskDAO;
     }
 
     @Transactional(readOnly = true)
@@ -58,6 +62,14 @@ public class DealService {
                 () -> new RuntimeException("User not found in context")
         ));
         this.dealDAO.create(deal);
+
+        EmailTask emailTask = EmailTask.builder()
+                .recipient(dealDTO.getEmail())
+                .theme("Регистрация услуги")
+                .text("Услуга зарегистрирована под номером " + deal.getId())
+                .build();
+        this.emailTaskDAO.create(emailTask);
+        //this.emailService.send(emailTask);
         return this.dealMapper.toDto(deal);
     }
 

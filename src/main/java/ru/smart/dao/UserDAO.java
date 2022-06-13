@@ -3,7 +3,6 @@ package ru.smart.dao;
 import org.springframework.stereotype.Repository;
 import ru.smart.domain.User;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository

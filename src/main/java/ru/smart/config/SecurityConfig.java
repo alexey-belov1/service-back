@@ -53,10 +53,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
             .authorizeRequests()   //Это строкой мы говорим предоставить разрешения для следующих url
                 .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
-                .antMatchers(HttpMethod.GET, "/api/deal").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/deal").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/user").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/subject").permitAll()
                 .anyRequest().authenticated()
                 .and()
             .addFilter(new JWTAuthenticationFilter(authenticationManager()))
@@ -73,7 +69,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration()
             .applyPermitDefaultValues();    //Задает по умолчанию конфигурацию, иначе будет сильно ограничена
-        corsConfiguration.setExposedHeaders(Arrays.asList("x-app-alert", "x-app-entity", "x-app-param", "x-total-count"));
+        corsConfiguration.setExposedHeaders(Arrays.asList("x-app-alert", "x-app-entity", "x-app-param"));
         corsConfiguration.setAllowedMethods(List.of("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);
