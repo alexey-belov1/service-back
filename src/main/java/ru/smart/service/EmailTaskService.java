@@ -16,7 +16,7 @@ public class EmailTaskService {
         this.emailTaskDAO = emailTaskDAO;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<EmailTask> findAllWithLimit(int limit) {
         return this.emailTaskDAO.findAllWithLimit(limit);
     }

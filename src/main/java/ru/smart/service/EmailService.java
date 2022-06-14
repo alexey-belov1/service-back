@@ -4,6 +4,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.smart.dao.EmailTaskDAO;
 import ru.smart.domain.EmailTask;
@@ -20,7 +21,7 @@ public class EmailService {
         this.emailTaskDAO = emailTaskDAO;
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     @Async("asyncExecutor")
     public void send(EmailTask emailTask) {
         SimpleMailMessage message = new SimpleMailMessage();

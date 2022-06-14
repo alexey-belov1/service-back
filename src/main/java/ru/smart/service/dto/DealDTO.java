@@ -22,7 +22,6 @@ public class DealDTO {
     @NotNull
     private String email;
 
-    @NotNull
     private Calendar created;
 
     private Calendar provided;

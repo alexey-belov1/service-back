@@ -2,6 +2,7 @@ package ru.smart.service;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.smart.dao.UserDAO;
 import ru.smart.domain.User;
@@ -49,7 +50,7 @@ public class UserService {
         return this.userDAO.findByLogin(login);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     public UserDTO save(UserDTO userDTO) {
         User user = this.userMapper.toEntity(userDTO);
         if (this.userDAO.findByLogin(user.getLogin()).isPresent()) {
@@ -61,13 +62,13 @@ public class UserService {
         return this.userMapper.toDto(user);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void update(UserDTO userDTO) {
         User user = this.userMapper.toEntity(userDTO);
         this.userDAO.delete(user);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void deleteById(int id) {
         this.userDAO.deleteById(id);
     }

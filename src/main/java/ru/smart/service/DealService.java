@@ -94,21 +94,14 @@ public class DealService {
         return this.dealMapper.toDto(deal);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void update(DealDTO dealDTO) {
         Deal deal = this.dealMapper.toEntity(dealDTO);
-        this.dealDAO.delete(deal);
+        this.dealDAO.update(deal);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void deleteById(int id) {
         this.dealDAO.deleteById(id);
-    }
-
-    private boolean checkSubjectLimit(DealDTO dealDTO) {
-        Subject subject = this.subjectDAO.findOne(dealDTO.getSubject().getId()).orElseThrow(
-                () -> new RuntimeException("Subject not found")
-        );
-        return subject.getReservedCount() > subject.getProvidedCount();
     }
 }
